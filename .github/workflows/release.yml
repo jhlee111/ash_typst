@@ -41,17 +41,17 @@ jobs:
       fail-fast: false
       matrix:
         nif: ["2.15"]
+        # Trimmed from upstream's 10 targets to the four this fork's consumer
+        # actually runs on — Apple Silicon dev machines, x86_64 CI runners, and
+        # Debian (glibc) containers on both arches. Building the typst crate
+        # tree is ~30min per target under CARGO_BUILD_JOBS=1, so unused targets
+        # are pure wall-clock. Keep this list in sync with `targets:` in
+        # lib/ash_typst_nif.ex — a target in one but not the other 404s.
         job:
           - { target: aarch64-unknown-linux-gnu   , os: ubuntu-22.04 , use-cross: true , rustflags: "-C codegen-units=1" }
-          - { target: aarch64-unknown-linux-musl  , os: ubuntu-22.04 , use-cross: true , rustflags: "-C target-feature=-crt-static -C codegen-units=1" }
-          - { target: arm-unknown-linux-gnueabihf , os: ubuntu-22.04 , use-cross: true }
           - { target: aarch64-apple-darwin        , os: macos-14      }
-          - { target: riscv64gc-unknown-linux-gnu , os: ubuntu-22.04 , use-cross: true }
           - { target: x86_64-apple-darwin         , os: macos-14      }
           - { target: x86_64-unknown-linux-gnu    , os: ubuntu-22.04  }
-          - { target: x86_64-unknown-linux-musl   , os: ubuntu-22.04 , use-cross: true }
-          - { target: x86_64-pc-windows-gnu       , os: windows-2022  }
-          - { target: x86_64-pc-windows-msvc      , os: windows-2022  }
 
     steps:
       - name: Checkout source code
