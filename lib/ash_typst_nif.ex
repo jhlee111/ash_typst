@@ -17,7 +17,14 @@ defmodule AshTypst.NIF do
     crate: "typst_nif",
     base_url:
       "https://github.com/jhlee111/ash_typst/releases/download/v#{Mix.Project.config()[:version]}",
-    force_build: System.get_env("ASH_TYPST_BUILD") in ["1", "true"],
+    # Passing :force_build explicitly beats rustler_precompiled's own
+    # `Keyword.put_new` fallback, so the `config :rustler_precompiled,
+    # :force_build, ash_typst: true` in this repo's dev/test config would go
+    # dead — and editing lib.rs would silently test against the last release.
+    # Fold it back in. Consumers don't set it, so they still download.
+    force_build:
+      System.get_env("ASH_TYPST_BUILD") in ["1", "true"] or
+        Application.compile_env(:rustler_precompiled, [:force_build, :ash_typst], false),
     version: Mix.Project.config()[:version],
     # Must match release.yml's `nif:` matrix. A 2.15 artifact loads fine on
     # newer OTP (the NIF API is backward compatible), so one build covers all.
