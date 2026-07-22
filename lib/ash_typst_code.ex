@@ -3,6 +3,8 @@ defprotocol AshTypst.Code do
   Protocol to support Typst code syntax.
   """
 
+  @fallback_to_any true
+
   @doc """
   Encode Elixir data structures into Typst code syntax.
 
